@@ -1,4 +1,4 @@
-package strings
+package internal
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 func TestLowerNew(t *testing.T) {
 	for index, test := range []struct {
 		text          string
-		expectedValue lower
+		expectedValue Lower
 	}{
 		{
 			text:          "",
@@ -28,7 +28,7 @@ func TestLowerNew(t *testing.T) {
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
-			result := newLower(test.text)
+			result := NewLower(test.text)
 			if !strings.EqualFold(string(result), string(test.expectedValue)) {
 				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
 			}
@@ -38,7 +38,7 @@ func TestLowerNew(t *testing.T) {
 
 func TestLowerString(t *testing.T) {
 	for index, test := range []struct {
-		lo            lower
+		lo            Lower
 		expectedValue string
 	}{
 		{
@@ -87,7 +87,7 @@ func TestLowerMsgPack(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var lo lower
+			var lo Lower
 			err = codec.NewDecoderBytes(textB, handle).Decode(&lo)
 			if err != nil {
 				t.Fatal(err)
@@ -116,7 +116,6 @@ func TestLowerJSON(t *testing.T) {
 	for index, test := range []struct {
 		text          string
 		expectedValue string
-		expectedError error
 	}{
 		{
 			text:          "",
@@ -137,7 +136,7 @@ func TestLowerJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var lo lower
+			var lo Lower
 			err = json.Unmarshal(textB, &lo)
 			if err != nil {
 				t.Fatal(err)
@@ -165,7 +164,6 @@ func TestLowerSql(t *testing.T) {
 	for index, test := range []struct {
 		text          string
 		expectedValue string
-		expectedError error
 	}{
 		{
 			text:          "",
@@ -181,7 +179,7 @@ func TestLowerSql(t *testing.T) {
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
-			origLower := lower(test.text)
+			origLower := Lower(test.text)
 			driverValue, err := origLower.Value()
 			if err != nil {
 				t.Fatal(err)
@@ -192,7 +190,7 @@ func TestLowerSql(t *testing.T) {
 				t.Fatalf("value does not returned with a string, returned: %T", driverValue)
 			}
 
-			var scanValue lower
+			var scanValue Lower
 
 			if s == "" {
 				err = scanValue.Scan(nil)
