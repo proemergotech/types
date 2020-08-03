@@ -17,7 +17,7 @@ func TestLanguageNew(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "fo",
@@ -29,11 +29,11 @@ func TestLanguageNew(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "12",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestLanguageMsgPack(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "fo",
@@ -71,11 +71,11 @@ func TestLanguageMsgPack(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "12",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -123,7 +123,7 @@ func TestLanguageJSON(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "fo",
@@ -135,11 +135,11 @@ func TestLanguageJSON(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "12",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -183,7 +183,7 @@ func TestLanguageSql(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "fo",
@@ -195,11 +195,11 @@ func TestLanguageSql(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 		{
 			text:          "12",
-			expectedError: "language must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid language",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
