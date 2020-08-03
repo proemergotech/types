@@ -1,8 +1,10 @@
 package types
 
 import (
-	"errors"
+	"bytes"
+	"fmt"
 	"regexp"
+	"strconv"
 
 	"gitlab.com/proemergotech/dliver-types/internal"
 )
@@ -15,65 +17,76 @@ type CountryCode struct {
 }
 
 func NewCountryCode(code string) (CountryCode, error) {
-	if err := validateCountryCode(code); err != nil {
-		return CountryCode{}, err
+	if code == "" {
+		return CountryCode{}, nil
+	}
+
+	if !countryCodeValidator.MatchString(code) {
+		return CountryCode{}, fmt.Errorf("invalid country code: %s", code)
 	}
 
 	return CountryCode{internal.NewLower(code)}, nil
 }
 
 func (cc CountryCode) MarshalText() ([]byte, error) {
-	if err := validateCountryCode(cc.String()); err != nil {
-		return nil, err
-	}
-
 	return cc.Lower.MarshalText()
 }
 
 func (cc *CountryCode) UnmarshalText(b []byte) error {
-	if err := validateCountryCode(string(b)); err != nil {
+	code, err := NewCountryCode(string(b))
+	if err != nil {
 		return err
 	}
 
-	return cc.Lower.UnmarshalText(b)
+	*cc = code
+
+	return nil
 }
 
 func (cc CountryCode) MarshalJSON() ([]byte, error) {
-	if err := validateCountryCode(cc.String()); err != nil {
-		return nil, err
-	}
-
 	return cc.Lower.MarshalJSON()
 }
 
 func (cc *CountryCode) UnmarshalJSON(b []byte) error {
-	return cc.Lower.UnmarshalJSONWithValidate(b, validateCountryCode)
+	if bytes.Equal(b, []byte("null")) {
+		return nil
+	}
+
+	str, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+
+	code, err := NewCountryCode(str)
+	if err != nil {
+		return err
+	}
+
+	*cc = code
+
+	return nil
 }
 
 func (cc CountryCode) MarshalBinary() ([]byte, error) {
-	if err := validateCountryCode(cc.String()); err != nil {
-		return nil, err
-	}
-
 	return cc.Lower.MarshalBinary()
 }
 
 func (cc *CountryCode) UnmarshalBinary(b []byte) error {
-	if err := validateCountryCode(string(b)); err != nil {
-		return err
-	}
-
-	return cc.Lower.UnmarshalBinary(b)
+	return cc.UnmarshalText(b)
 }
 
 func (cc *CountryCode) Scan(src interface{}) error {
-	return cc.Lower.ScanWithValidate(src, validateCountryCode)
-}
-
-func validateCountryCode(code string) error {
-	if !countryCodeValidator.MatchString(code) {
-		return errors.New("country code must contain alphabetic characters only with a length of 2")
+	if src == nil {
+		*cc = CountryCode{}
+		return nil
 	}
 
-	return nil
+	if src, ok := src.(string); ok {
+		var err error
+		*cc, err = NewCountryCode(src)
+
+		return err
+	}
+
+	return fmt.Errorf("cannot convert %T to CountryCode", src)
 }

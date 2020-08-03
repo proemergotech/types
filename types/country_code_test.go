@@ -17,7 +17,7 @@ func TestCountryCodeNew(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "fo",
@@ -29,11 +29,11 @@ func TestCountryCodeNew(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "12",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestCountryCodeMsgPack(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "fo",
@@ -71,11 +71,11 @@ func TestCountryCodeMsgPack(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "12",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -123,7 +123,7 @@ func TestCountryCodeJSON(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "fo",
@@ -135,11 +135,11 @@ func TestCountryCodeJSON(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "12",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -183,7 +183,7 @@ func TestCountryCodeSql(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "fo",
@@ -195,11 +195,11 @@ func TestCountryCodeSql(t *testing.T) {
 		},
 		{
 			text:          "Foo",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 		{
 			text:          "12",
-			expectedError: "country code must contain alphabetic characters only with a length of 2",
+			expectedError: "invalid country code",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
