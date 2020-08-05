@@ -9,7 +9,7 @@ import (
 	"gitlab.com/proemergotech/dliver-types/internal"
 )
 
-var countryCodeValidator = regexp.MustCompile(`^[A-Za-z]{2}$`)
+var countryCodeValidator = regexp.MustCompile(`(^[A-Za-z]{2}$)|(^[tT]1$)`)
 
 // ISO 3166-1 Alpha-2 representation of country codes
 type CountryCode struct {
