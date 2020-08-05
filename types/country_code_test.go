@@ -28,6 +28,10 @@ func TestCountryCodeNew(t *testing.T) {
 			expectedValue: CountryCode{"fo"},
 		},
 		{
+			text:          "t1",
+			expectedValue: CountryCode{"t1"},
+		},
+		{
 			text:          "Foo",
 			expectedError: "invalid country code",
 		},

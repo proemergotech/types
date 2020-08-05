@@ -28,6 +28,10 @@ func TestLanguageNew(t *testing.T) {
 			expectedValue: Language{"fo"},
 		},
 		{
+			text:          "t1",
+			expectedValue: Language{"t1"},
+		},
+		{
 			text:          "Foo",
 			expectedError: "invalid language",
 		},

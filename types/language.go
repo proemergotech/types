@@ -9,7 +9,7 @@ import (
 	"gitlab.com/proemergotech/dliver-types/internal"
 )
 
-var languageValidator = regexp.MustCompile(`^[A-Za-z]{2}$`)
+var languageValidator = regexp.MustCompile(`(^[A-Za-z]{2}$)|(^[tT]1$)`)
 
 // ISO 639-1 representation of language codes
 type Language struct {
