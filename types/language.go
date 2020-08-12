@@ -2,52 +2,58 @@ package types
 
 import (
 	"bytes"
+	"database/sql/driver"
 	"fmt"
 	"regexp"
 	"strconv"
-
-	"gitlab.com/proemergotech/dliver-types/internal"
+	"strings"
 )
 
-var languageValidator = regexp.MustCompile(`(^[A-Za-z]{2}$)|(^[tT]1$)`)
+var languageValidator = regexp.MustCompile(`^[A-Za-z]{2}$`)
 
-// ISO 639-1 representation of language codes
-type Language struct {
-	internal.Lower
-}
+// ISO 639-1 representation of language langs
+type Language string
 
-func NewLanguage(code string) (Language, error) {
-	if code == "" {
-		return Language{}, nil
+func NewLanguage(lang string) (Language, error) {
+	if lang == "" {
+		return "", nil
 	}
 
-	if !languageValidator.MatchString(code) {
-		return Language{}, fmt.Errorf("invalid language: %s", code)
+	if !languageValidator.MatchString(lang) {
+		return "", fmt.Errorf("invalid language: %s", lang)
 	}
 
-	return Language{internal.NewLower(code)}, nil
+	return Language(strings.ToLower(lang)), nil
 }
 
-func (la Language) MarshalText() ([]byte, error) {
-	return la.Lower.MarshalText()
+func (l Language) String() string {
+	return string(l)
 }
 
-func (la *Language) UnmarshalText(b []byte) error {
+func (l Language) MarshalText() ([]byte, error) {
+	return []byte(l.String()), nil
+}
+
+func (l *Language) UnmarshalText(b []byte) error {
 	lang, err := NewLanguage(string(b))
 	if err != nil {
 		return err
 	}
 
-	*la = lang
+	*l = lang
 
 	return nil
 }
 
-func (la Language) MarshalJSON() ([]byte, error) {
-	return la.Lower.MarshalJSON()
+func (l Language) MarshalJSON() ([]byte, error) {
+	if l.String() == "" {
+		return []byte("null"), nil
+	}
+
+	return []byte(strconv.Quote(l.String())), nil
 }
 
-func (la *Language) UnmarshalJSON(b []byte) error {
+func (l *Language) UnmarshalJSON(b []byte) error {
 	if bytes.Equal(b, []byte("null")) {
 		return nil
 	}
@@ -62,28 +68,36 @@ func (la *Language) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	*la = lang
+	*l = lang
 
 	return nil
 }
 
-func (la Language) MarshalBinary() ([]byte, error) {
-	return la.Lower.MarshalBinary()
+func (l Language) MarshalBinary() ([]byte, error) {
+	return l.MarshalText()
 }
 
-func (la *Language) UnmarshalBinary(b []byte) error {
-	return la.UnmarshalText(b)
+func (l *Language) UnmarshalBinary(b []byte) error {
+	return l.UnmarshalText(b)
 }
 
-func (la *Language) Scan(src interface{}) error {
+func (l Language) Value() (driver.Value, error) {
+	if l.String() == "" {
+		return nil, nil
+	}
+
+	return l.String(), nil
+}
+
+func (l *Language) Scan(src interface{}) error {
 	if src == nil {
-		*la = Language{}
+		*l = ""
 		return nil
 	}
 
 	if src, ok := src.(string); ok {
 		var err error
-		*la, err = NewLanguage(src)
+		*l, err = NewLanguage(src)
 
 		return err
 	}

@@ -21,15 +21,15 @@ func TestCountryCodeNew(t *testing.T) {
 		},
 		{
 			text:          "fo",
-			expectedValue: CountryCode{"fo"},
+			expectedValue: "fo",
 		},
 		{
 			text:          "Fo",
-			expectedValue: CountryCode{"fo"},
+			expectedValue: "fo",
 		},
 		{
 			text:          "t1",
-			expectedValue: CountryCode{"t1"},
+			expectedValue: "t1",
 		},
 		{
 			text:          "Foo",
@@ -49,6 +49,29 @@ func TestCountryCodeNew(t *testing.T) {
 				t.Fatal(err)
 			}
 			if !strings.EqualFold(result.String(), test.expectedValue.String()) {
+				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
+			}
+		})
+	}
+}
+
+func TestCountryCodeString(t *testing.T) {
+	for index, test := range []struct {
+		code          CountryCode
+		expectedValue string
+	}{
+		{
+			code:          "",
+			expectedValue: "",
+		},
+		{
+			code:          "foo",
+			expectedValue: "foo",
+		},
+	} {
+		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.code, test.expectedValue), func(t *testing.T) {
+			result := test.code.String()
+			if result != test.expectedValue {
 				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
 			}
 		})
@@ -91,8 +114,8 @@ func TestCountryCodeMsgPack(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var cc CountryCode
-			err = codec.NewDecoderBytes(textB, handle).Decode(&cc)
+			var code CountryCode
+			err = codec.NewDecoderBytes(textB, handle).Decode(&code)
 			if err != nil {
 				if strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -101,7 +124,7 @@ func TestCountryCodeMsgPack(t *testing.T) {
 			}
 
 			var b []byte
-			err = codec.NewEncoderBytes(&b, handle).Encode(&cc)
+			err = codec.NewEncoderBytes(&b, handle).Encode(&code)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -127,7 +150,7 @@ func TestCountryCodeJSON(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "invalid country code",
+			expectedValue: "",
 		},
 		{
 			text:          "fo",
@@ -152,8 +175,8 @@ func TestCountryCodeJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var cc CountryCode
-			err = json.Unmarshal(textB, &cc)
+			var code CountryCode
+			err = json.Unmarshal(textB, &code)
 			if err != nil {
 				if strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -161,7 +184,7 @@ func TestCountryCodeJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			b, err := json.Marshal(cc)
+			b, err := json.Marshal(code)
 			if err != nil {
 				t.Fatal(err)
 			}

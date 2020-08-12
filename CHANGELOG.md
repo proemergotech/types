@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.1.0 / 2020-08-11
+- removed internal.Lower
+- CountryCode and Language are now string aliases
+
 ## v1.0.1 / 2020-08-05
 - CountryCode and Language now accepts 'T1' (Tor exit node)
 
