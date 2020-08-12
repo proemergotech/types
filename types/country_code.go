@@ -2,52 +2,58 @@ package types
 
 import (
 	"bytes"
+	"database/sql/driver"
 	"fmt"
 	"regexp"
 	"strconv"
-
-	"gitlab.com/proemergotech/dliver-types/internal"
+	"strings"
 )
 
 var countryCodeValidator = regexp.MustCompile(`(^[A-Za-z]{2}$)|(^[tT]1$)`)
 
-// ISO 3166-1 Alpha-2 representation of country codes
-type CountryCode struct {
-	internal.Lower
-}
+// ISO 3166-1 Alpha-2 representation of country codes. T1 represents tor exit node
+type CountryCode string
 
 func NewCountryCode(code string) (CountryCode, error) {
 	if code == "" {
-		return CountryCode{}, nil
+		return "", nil
 	}
 
 	if !countryCodeValidator.MatchString(code) {
-		return CountryCode{}, fmt.Errorf("invalid country code: %s", code)
+		return "", fmt.Errorf("invalid country code: %s", code)
 	}
 
-	return CountryCode{internal.NewLower(code)}, nil
+	return CountryCode(strings.ToLower(code)), nil
 }
 
-func (cc CountryCode) MarshalText() ([]byte, error) {
-	return cc.Lower.MarshalText()
+func (c CountryCode) String() string {
+	return string(c)
 }
 
-func (cc *CountryCode) UnmarshalText(b []byte) error {
+func (c CountryCode) MarshalText() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
+func (c *CountryCode) UnmarshalText(b []byte) error {
 	code, err := NewCountryCode(string(b))
 	if err != nil {
 		return err
 	}
 
-	*cc = code
+	*c = code
 
 	return nil
 }
 
-func (cc CountryCode) MarshalJSON() ([]byte, error) {
-	return cc.Lower.MarshalJSON()
+func (c CountryCode) MarshalJSON() ([]byte, error) {
+	if c.String() == "" {
+		return []byte("null"), nil
+	}
+
+	return []byte(strconv.Quote(c.String())), nil
 }
 
-func (cc *CountryCode) UnmarshalJSON(b []byte) error {
+func (c *CountryCode) UnmarshalJSON(b []byte) error {
 	if bytes.Equal(b, []byte("null")) {
 		return nil
 	}
@@ -62,28 +68,36 @@ func (cc *CountryCode) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	*cc = code
+	*c = code
 
 	return nil
 }
 
-func (cc CountryCode) MarshalBinary() ([]byte, error) {
-	return cc.Lower.MarshalBinary()
+func (c CountryCode) MarshalBinary() ([]byte, error) {
+	return c.MarshalText()
 }
 
-func (cc *CountryCode) UnmarshalBinary(b []byte) error {
-	return cc.UnmarshalText(b)
+func (c *CountryCode) UnmarshalBinary(b []byte) error {
+	return c.UnmarshalText(b)
 }
 
-func (cc *CountryCode) Scan(src interface{}) error {
+func (c CountryCode) Value() (driver.Value, error) {
+	if c.String() == "" {
+		return nil, nil
+	}
+
+	return c.String(), nil
+}
+
+func (c *CountryCode) Scan(src interface{}) error {
 	if src == nil {
-		*cc = CountryCode{}
+		*c = ""
 		return nil
 	}
 
 	if src, ok := src.(string); ok {
 		var err error
-		*cc, err = NewCountryCode(src)
+		*c, err = NewCountryCode(src)
 
 		return err
 	}

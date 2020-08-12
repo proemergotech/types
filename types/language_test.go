@@ -21,15 +21,15 @@ func TestLanguageNew(t *testing.T) {
 		},
 		{
 			text:          "fo",
-			expectedValue: Language{"fo"},
+			expectedValue: "fo",
 		},
 		{
 			text:          "Fo",
-			expectedValue: Language{"fo"},
+			expectedValue: "fo",
 		},
 		{
 			text:          "t1",
-			expectedValue: Language{"t1"},
+			expectedValue: "t1",
 		},
 		{
 			text:          "Foo",
@@ -49,6 +49,29 @@ func TestLanguageNew(t *testing.T) {
 				t.Fatal(err)
 			}
 			if !strings.EqualFold(result.String(), test.expectedValue.String()) {
+				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
+			}
+		})
+	}
+}
+
+func TestLanguageString(t *testing.T) {
+	for index, test := range []struct {
+		lang          Language
+		expectedValue string
+	}{
+		{
+			lang:          "",
+			expectedValue: "",
+		},
+		{
+			lang:          "foo",
+			expectedValue: "foo",
+		},
+	} {
+		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.lang, test.expectedValue), func(t *testing.T) {
+			result := test.lang.String()
+			if result != test.expectedValue {
 				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
 			}
 		})
@@ -91,8 +114,8 @@ func TestLanguageMsgPack(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var la Language
-			err = codec.NewDecoderBytes(textB, handle).Decode(&la)
+			var lang Language
+			err = codec.NewDecoderBytes(textB, handle).Decode(&lang)
 			if err != nil {
 				if strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -101,7 +124,7 @@ func TestLanguageMsgPack(t *testing.T) {
 			}
 
 			var b []byte
-			err = codec.NewEncoderBytes(&b, handle).Encode(&la)
+			err = codec.NewEncoderBytes(&b, handle).Encode(&lang)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -127,7 +150,7 @@ func TestLanguageJSON(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "invalid language",
+			expectedValue: "",
 		},
 		{
 			text:          "fo",
@@ -152,8 +175,8 @@ func TestLanguageJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var la Language
-			err = json.Unmarshal(textB, &la)
+			var lang Language
+			err = json.Unmarshal(textB, &lang)
 			if err != nil {
 				if strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -161,7 +184,7 @@ func TestLanguageJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			b, err := json.Marshal(la)
+			b, err := json.Marshal(lang)
 			if err != nil {
 				t.Fatal(err)
 			}
