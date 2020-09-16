@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.2.0 / 2020-09-15
+- added currency
+- fixed tests
+
 ## v1.1.0 / 2020-08-11
 - removed internal.Lower
 - CountryCode and Language are now string aliases

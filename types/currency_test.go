@@ -9,10 +9,10 @@ import (
 	"github.com/ugorji/go/codec"
 )
 
-func TestLanguageNew(t *testing.T) {
+func TestCurrencyNew(t *testing.T) {
 	for index, test := range []struct {
 		text          string
-		expectedValue Language
+		expectedValue Currency
 		expectedError string
 	}{
 		{
@@ -20,28 +20,28 @@ func TestLanguageNew(t *testing.T) {
 			expectedValue: "",
 		},
 		{
-			text:          "fo",
-			expectedValue: "fo",
-		},
-		{
-			text:          "Fo",
-			expectedValue: "fo",
-		},
-		{
-			text:          "t1",
-			expectedError: "invalid language",
+			text:          "foo",
+			expectedValue: "foo",
 		},
 		{
 			text:          "Foo",
-			expectedError: "invalid language",
+			expectedValue: "foo",
 		},
 		{
-			text:          "12",
-			expectedError: "invalid language",
+			text:          "Fo1",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "Fo",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "123",
+			expectedError: "invalid currency",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
-			result, err := NewLanguage(test.text)
+			result, err := NewCurrency(test.text)
 			if err != nil {
 				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -57,22 +57,22 @@ func TestLanguageNew(t *testing.T) {
 	}
 }
 
-func TestLanguageString(t *testing.T) {
+func TestCurrencyString(t *testing.T) {
 	for index, test := range []struct {
-		lang          Language
+		currency      Currency
 		expectedValue string
 	}{
 		{
-			lang:          "",
+			currency:      "",
 			expectedValue: "",
 		},
 		{
-			lang:          "foo",
+			currency:      "foo",
 			expectedValue: "foo",
 		},
 	} {
-		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.lang, test.expectedValue), func(t *testing.T) {
-			result := test.lang.String()
+		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.currency, test.expectedValue), func(t *testing.T) {
+			result := test.currency.String()
 			if result != test.expectedValue {
 				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
 			}
@@ -80,7 +80,7 @@ func TestLanguageString(t *testing.T) {
 	}
 }
 
-func TestLanguageMsgPack(t *testing.T) {
+func TestCurrencyMsgPack(t *testing.T) {
 	for index, test := range []struct {
 		text          string
 		expectedValue string
@@ -91,20 +91,24 @@ func TestLanguageMsgPack(t *testing.T) {
 			expectedValue: "",
 		},
 		{
-			text:          "fo",
-			expectedValue: "fo",
-		},
-		{
-			text:          "Fo",
-			expectedValue: "fo",
+			text:          "foo",
+			expectedValue: "foo",
 		},
 		{
 			text:          "Foo",
-			expectedError: "invalid language",
+			expectedValue: "foo",
 		},
 		{
-			text:          "12",
-			expectedError: "invalid language",
+			text:          "Fo1",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "Fo",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "123",
+			expectedError: "invalid currency",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -116,8 +120,8 @@ func TestLanguageMsgPack(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var lang Language
-			err = codec.NewDecoderBytes(textB, handle).Decode(&lang)
+			var currency Currency
+			err = codec.NewDecoderBytes(textB, handle).Decode(&currency)
 			if err != nil {
 				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -128,7 +132,7 @@ func TestLanguageMsgPack(t *testing.T) {
 			}
 
 			var b []byte
-			err = codec.NewEncoderBytes(&b, handle).Encode(&lang)
+			err = codec.NewEncoderBytes(&b, handle).Encode(&currency)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -146,7 +150,7 @@ func TestLanguageMsgPack(t *testing.T) {
 	}
 }
 
-func TestLanguageJSON(t *testing.T) {
+func TestCurrencyJSON(t *testing.T) {
 	for index, test := range []struct {
 		text          string
 		expectedValue string
@@ -157,20 +161,24 @@ func TestLanguageJSON(t *testing.T) {
 			expectedValue: "",
 		},
 		{
-			text:          "fo",
-			expectedValue: "fo",
-		},
-		{
-			text:          "Fo",
-			expectedValue: "fo",
+			text:          "foo",
+			expectedValue: "foo",
 		},
 		{
 			text:          "Foo",
-			expectedError: "invalid language",
+			expectedValue: "foo",
 		},
 		{
-			text:          "12",
-			expectedError: "invalid language",
+			text:          "Fo1",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "Fo",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "123",
+			expectedError: "invalid currency",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
@@ -179,8 +187,8 @@ func TestLanguageJSON(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var lang Language
-			err = json.Unmarshal(textB, &lang)
+			var currency Currency
+			err = json.Unmarshal(textB, &currency)
 			if err != nil {
 				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -190,7 +198,7 @@ func TestLanguageJSON(t *testing.T) {
 				t.Errorf("expected error: %s, got none", test.expectedError)
 			}
 
-			b, err := json.Marshal(lang)
+			b, err := json.Marshal(currency)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -208,7 +216,7 @@ func TestLanguageJSON(t *testing.T) {
 	}
 }
 
-func TestLanguageSql(t *testing.T) {
+func TestCurrencySql(t *testing.T) {
 	for index, test := range []struct {
 		text          string
 		expectedValue string
@@ -219,24 +227,28 @@ func TestLanguageSql(t *testing.T) {
 			expectedValue: "",
 		},
 		{
-			text:          "fo",
-			expectedValue: "fo",
-		},
-		{
-			text:          "Fo",
-			expectedValue: "fo",
+			text:          "foo",
+			expectedValue: "foo",
 		},
 		{
 			text:          "Foo",
-			expectedError: "invalid language",
+			expectedValue: "foo",
 		},
 		{
-			text:          "12",
-			expectedError: "invalid language",
+			text:          "Fo1",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "Fo",
+			expectedError: "invalid currency",
+		},
+		{
+			text:          "123",
+			expectedError: "invalid currency",
 		},
 	} {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
-			origCode, err := NewLanguage(test.text)
+			origCode, err := NewCurrency(test.text)
 			if err != nil {
 				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
@@ -255,7 +267,7 @@ func TestLanguageSql(t *testing.T) {
 				t.Fatalf("value does not returned with a string, returned: %T", driverValue)
 			}
 
-			var scanValue Language
+			var scanValue Currency
 
 			if s == "" {
 				err = scanValue.Scan(nil)
