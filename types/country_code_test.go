@@ -17,7 +17,7 @@ func TestCountryCodeNew(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "invalid country code",
+			expectedValue: "",
 		},
 		{
 			text:          "fo",
@@ -43,10 +43,12 @@ func TestCountryCodeNew(t *testing.T) {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
 			result, err := NewCountryCode(test.text)
 			if err != nil {
-				if strings.Contains(err.Error(), test.expectedError) {
+				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
 				}
 				t.Fatal(err)
+			} else if test.expectedError != "" {
+				t.Errorf("expected error: %s, got none", test.expectedError)
 			}
 			if !strings.EqualFold(result.String(), test.expectedValue.String()) {
 				t.Fatalf("expected: %v, got: %v", test.expectedValue, result)
@@ -86,7 +88,7 @@ func TestCountryCodeMsgPack(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "invalid country code",
+			expectedValue: "",
 		},
 		{
 			text:          "fo",
@@ -117,10 +119,12 @@ func TestCountryCodeMsgPack(t *testing.T) {
 			var code CountryCode
 			err = codec.NewDecoderBytes(textB, handle).Decode(&code)
 			if err != nil {
-				if strings.Contains(err.Error(), test.expectedError) {
+				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
 				}
 				t.Fatal(err)
+			} else if test.expectedError != "" {
+				t.Errorf("expected error: %s, got none", test.expectedError)
 			}
 
 			var b []byte
@@ -178,10 +182,12 @@ func TestCountryCodeJSON(t *testing.T) {
 			var code CountryCode
 			err = json.Unmarshal(textB, &code)
 			if err != nil {
-				if strings.Contains(err.Error(), test.expectedError) {
+				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
 				}
 				t.Fatal(err)
+			} else if test.expectedError != "" {
+				t.Errorf("expected error: %s, got none", test.expectedError)
 			}
 
 			b, err := json.Marshal(code)
@@ -210,7 +216,7 @@ func TestCountryCodeSql(t *testing.T) {
 	}{
 		{
 			text:          "",
-			expectedError: "invalid country code",
+			expectedValue: "",
 		},
 		{
 			text:          "fo",
@@ -232,10 +238,12 @@ func TestCountryCodeSql(t *testing.T) {
 		t.Run(fmt.Sprintf("Case %d: %v -> %v", index+1, test.text, test.expectedValue), func(t *testing.T) {
 			origCode, err := NewCountryCode(test.text)
 			if err != nil {
-				if strings.Contains(err.Error(), test.expectedError) {
+				if test.expectedError != "" && strings.Contains(err.Error(), test.expectedError) {
 					return
 				}
 				t.Fatal(err)
+			} else if test.expectedError != "" {
+				t.Errorf("expected error: %s, got none", test.expectedError)
 			}
 			driverValue, err := origCode.Value()
 			if err != nil {
