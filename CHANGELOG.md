@@ -1,5 +1,8 @@
 # Release Notes
 
+## v1.3.0 / 2022-03-08
+- move to github
+
 ## v1.2.0 / 2020-09-15
 - added currency
 - fixed tests

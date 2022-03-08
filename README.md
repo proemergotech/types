@@ -1,10 +1,1 @@
-# dliver-types
-
-A collection of custom types. They all include json, text and binary marshalling/unmarshalling.
-
-# TYPES
-## CountryCode
-Lowercase version of ISO 3166-1 Alpha-2
-
-## Language
-Lowercase version of ISO 639-1
+[![Go Reference](https://pkg.go.dev/badge/github.com/proemergotech/types.svg)](https://pkg.go.dev/github.com/proemergotech/types)
